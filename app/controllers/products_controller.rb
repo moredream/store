@@ -44,9 +44,14 @@ class ProductsController < ApplicationController
 
     respond_to do |format|
       if @product.save
-        format.html { redirect_to @product, notice: 'Product was successfully created.' }
-        format.json { render json: @product, status: :created, location: @product }
-      else
+
+        if params[:product][:image].present?
+          format.html {render :crop}
+        else
+          format.html { redirect_to @product, notice: 'Product was successfully created.' }
+          format.json { render json: @product, status: :created, location: @product }
+        end
+     else
         format.html { render action: "new" }
         format.json { render json: @product.errors, status: :unprocessable_entity }
       end
@@ -60,8 +65,12 @@ class ProductsController < ApplicationController
 
     respond_to do |format|
       if @product.update_attributes(params[:product])
-        format.html { redirect_to @product, notice: 'Product was successfully updated.' }
-        format.json { head :no_content }
+        if params[:product][:image].present?
+          format.html {render :crop}
+        else
+          format.html { redirect_to @product, notice: 'Product was successfully updated.' }
+          format.json { head :no_content }
+        end
       else
         format.html { render action: "edit" }
         format.json { render json: @product.errors, status: :unprocessable_entity }
